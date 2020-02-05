@@ -12,6 +12,8 @@
     <script src="js/three.min.js"></script>
 	<script src="js/Detector.js"></script>
     <script src="js/OrbitControls.js"></script>
+	<!--Added for the menu GUI-->
+	<script src="js/dat.gui.min.js"></script>	
  </head>
 <div id="overlaytext" style="position: absolute; top: 600px; left: 100px"> 
 
@@ -44,9 +46,14 @@
     var renderer;
 	var prism, controls;
     var acolor, pcolor, dcolor;
+	var gui;
+	var ambientLight;
+	var pointLight;
+	var directionalLight;
 	
 	initScene();
 	renderScene();
+	createGui();
 	
    // construct the functions
 	function initScene() {
@@ -89,14 +96,14 @@
 	pcolor=new THREE.Color(0xff0000);
 	dcolor=new THREE.Color(0x0000ff);
 	
-	var ambientLight = new THREE.AmbientLight(acolor);
+	ambientLight = new THREE.AmbientLight(acolor);
         scene.add(ambientLight);
 
-    var light = new THREE.PointLight(pcolor, 1, 0);
-        light.position.set(0, 10, 10);
-        scene.add(light);
+    pointLight = new THREE.PointLight(pcolor, 1, 0);
+        pointLight.position.set(0, 10, 10);
+        scene.add(pointLight);
 
-    var directionalLight = new THREE.DirectionalLight( dcolor, 1);
+    directionalLight = new THREE.DirectionalLight( dcolor, 1);
     directionalLight.position.set( 0, 0, 10 );
     scene.add( directionalLight );
 	
@@ -165,6 +172,38 @@
 	 // prism.rotation.y += 0.02;
       requestAnimationFrame(renderScene);	  
 	  controls.update();
+	}
+	
+	function createGui() {
+	gui = new dat.GUI();
+	
+	//All the parameters needed for the GUI
+	var parameters = {
+	'Ambient Light Colour:': ambientLight.color.getHex(),
+	'Point Light Colour:': pointLight.color.getHex(),
+	'Directional Light Colour:': directionalLight.color.getHex()
+	};
+	
+	//Adding the menu's options that will update when the user changes the values
+	//Ambient Light
+	gui.addColor(parameters, 'Ambient Light Colour:' ).onChange(function(val) {
+		ambientLight.color.setHex( val );
+		renderScene();
+	});
+	
+	//PointLight	
+	gui.addColor(parameters,'Point Light Colour:').onChange(function(val){
+		pointLight.color.setHex(val);
+		renderScene();
+	});
+	
+	//DirectionalLight
+	gui.addColor(parameters,'Directional Light Colour:').onChange(function(val){
+		directionalLight.color.setHex(val);
+		renderScene();
+	});
+	//Finally open the gui so that it built
+	gui.open();
 	}
 
 		</script>
